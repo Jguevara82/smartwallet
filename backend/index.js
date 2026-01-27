@@ -1,34 +1,38 @@
+require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+
+// Import routes
+const authRoutes = require('./src/routes/auth');
+const categoryRoutes = require('./src/routes/categories');
+const transactionRoutes = require('./src/routes/transactions');
 
 const prisma = new PrismaClient();
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
+// Middleware
+app.use(cors());
 app.use(express.json());
 
+// Health check
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.json({ message: 'SmartWallet API is running!', version: '1.0.0' });
 });
 
-// Example: Create a new user
-app.post('/user', async (req, res) => {
-  const { email, name } = req.body;
-  const user = await prisma.user.create({
-    data: {
-      email,
-      name,
-    },
-  });
-  res.json(user);
+// Routes
+app.use('/auth', authRoutes);
+app.use('/categories', categoryRoutes);
+app.use('/transactions', transactionRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// Example: Get all users
-app.get('/users', async (req, res) => {
-  const users = await prisma.user.findMany();
-  res.json(users);
-});
-
+// Start server
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`SmartWallet API listening at http://localhost:${port}`);
 });
