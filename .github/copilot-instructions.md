@@ -24,10 +24,11 @@ React Frontend (Vite) → Express API → Prisma ORM → PostgreSQL
 4. Backend `authMiddleware` validates token and extracts `userId`
 
 ### Data Models ([backend/prisma/schema.prisma](../backend/prisma/schema.prisma))
-- **User**: `id`, `email` (unique), `password` (hashed), `name`, has many `Transaction` and `Budget`
+- **User**: `id`, `email` (unique), `password` (hashed), `name`, has many `Transaction`, `Budget`, and `RecurringTransaction`
 - **Category**: `id`, `name`, `type` (income|expense), `icon`, `color`
 - **Transaction**: `id`, `amount`, `description`, `type`, `date`, belongs to `User` and `Category`
 - **Budget**: `id`, `amount`, `period` (weekly|monthly|yearly), `alertThreshold`, belongs to `User` and `Category`
+- **RecurringTransaction**: `id`, `amount`, `description`, `type`, `frequency`, `startDate`, `endDate`, `nextDate`, `lastProcessed`, `isActive`, belongs to `User` and `Category`
 
 ## Developer Workflows
 
@@ -69,7 +70,8 @@ backend/
 │       ├── auth.js          # POST /auth/register, /auth/login, GET /auth/me
 │       ├── categories.js    # GET /categories, POST /categories/seed
 │       ├── transactions.js  # Full CRUD with auth protection
-│       └── budgets.js       # Budget CRUD with spending status calculation
+│       ├── budgets.js       # Budget CRUD with spending status calculation
+│       └── recurring.js     # Recurring transactions CRUD + process
 ```
 
 ### API Pattern
@@ -95,10 +97,11 @@ frontend/src/
 └── pages/
     ├── Login.jsx            # Login form
     ├── Register.jsx         # Registration form
-    ├── Dashboard.jsx        # Summary cards + Pie chart (Recharts) + Budget status
+    ├── Dashboard.jsx        # Summary cards + Pie chart (Recharts) + Budget status + Upcoming recurring
     ├── Transactions.jsx     # Transaction list with filters
     ├── TransactionForm.jsx  # Add/Edit transaction form
-    └── Budgets.jsx          # Budget management with progress bars
+    ├── Budgets.jsx          # Budget management with progress bars
+    └── Recurring.jsx        # Recurring transactions management
 ```
 
 ### Frontend Patterns
@@ -149,6 +152,15 @@ api.interceptors.request.use((config) => {
 - `PUT /budgets/:id` - Update budget amount/threshold
 - `DELETE /budgets/:id` - Delete budget
 
+### Recurring Transactions (token required)
+- `GET /recurring` - List all recurring transactions
+- `GET /recurring/upcoming` - Get recurring due in next 30 days
+- `POST /recurring` - Create recurring transaction
+- `PUT /recurring/:id` - Update recurring transaction
+- `DELETE /recurring/:id` - Delete recurring transaction
+- `POST /recurring/process` - Generate due transactions
+- `POST /recurring/:id/skip` - Skip next occurrence
+
 ## Budget System
 
 ### How Budgets Work
@@ -161,3 +173,24 @@ api.interceptors.request.use((config) => {
 - `ok` (green): Under threshold
 - `warning` (yellow): Above threshold but under limit
 - `exceeded` (red): Over budget limit
+
+## Recurring Transactions System
+
+### How Recurring Transactions Work
+1. User creates a recurring transaction template (amount, category, frequency)
+2. `nextDate` tracks when the transaction should occur
+3. Call `POST /recurring/process` to generate actual transactions for due items
+4. System updates `nextDate` based on frequency after processing
+5. Dashboard shows upcoming recurring in next 30 days
+
+### Frequency Values
+- `daily`: Every day
+- `weekly`: Every 7 days
+- `biweekly`: Every 14 days
+- `monthly`: Same day next month
+- `yearly`: Same day next year
+
+### Recurring Actions
+- **Process**: Generates real transactions for all due recurring items
+- **Skip**: Advances `nextDate` without creating a transaction
+- **Pause/Resume**: Toggle `isActive` to temporarily stop processing

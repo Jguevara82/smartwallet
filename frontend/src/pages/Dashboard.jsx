@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { transactionsAPI, categoriesAPI, budgetsAPI } from '../services/api';
+import { transactionsAPI, categoriesAPI, budgetsAPI, recurringAPI } from '../services/api';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { 
   TrendingUp, 
@@ -11,7 +11,9 @@ import {
   LogOut,
   RefreshCw,
   AlertTriangle,
-  Target
+  Target,
+  Calendar,
+  Clock
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -20,6 +22,7 @@ const Dashboard = () => {
   const [summary, setSummary] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const [upcomingRecurring, setUpcomingRecurring] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,16 +35,18 @@ const Dashboard = () => {
       // Seed categories if needed
       await categoriesAPI.seed();
       
-      // Load summary, recent transactions, and budgets
-      const [summaryRes, transactionsRes, budgetsRes] = await Promise.all([
+      // Load summary, recent transactions, budgets, and upcoming recurring
+      const [summaryRes, transactionsRes, budgetsRes, upcomingRes] = await Promise.all([
         transactionsAPI.getSummary(),
         transactionsAPI.getAll(),
         budgetsAPI.getAll(),
+        recurringAPI.getUpcoming(),
       ]);
       
       setSummary(summaryRes.data);
       setTransactions(transactionsRes.data.slice(0, 5)); // Last 5 transactions
       setBudgets(budgetsRes.data);
+      setUpcomingRecurring(upcomingRes.data.slice(0, 5)); // Next 5 upcoming
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
@@ -93,7 +98,27 @@ const Dashboard = () => {
             <h1 className="text-2xl font-bold text-gray-900">SmartWallet</h1>
             <p className="text-gray-600">Welcome back, {user?.name || user?.email}!</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/transactions')}
+              className="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition text-sm font-medium"
+            >
+              Transactions
+            </button>
+            <button
+              onClick={() => navigate('/budgets')}
+              className="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition text-sm font-medium"
+            >
+              Budgets
+            </button>
+            <button
+              onClick={() => navigate('/recurring')}
+              className="px-3 py-2 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition text-sm font-medium flex items-center gap-1"
+            >
+              <Calendar className="w-4 h-4" />
+              Recurring
+            </button>
+            <div className="w-px h-6 bg-gray-300 mx-2" />
             <button
               onClick={loadData}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
@@ -280,6 +305,54 @@ const Dashboard = () => {
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Upcoming Recurring Transactions */}
+        {upcomingRecurring.length > 0 && (
+          <div className="mt-8 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-purple-600" />
+                <h2 className="text-lg font-semibold text-gray-900">Upcoming Recurring</h2>
+              </div>
+              <button
+                onClick={() => navigate('/recurring')}
+                className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+              >
+                Manage
+              </button>
+            </div>
+            <div className="space-y-3">
+              {upcomingRecurring.map((item) => {
+                const daysUntil = Math.ceil((new Date(item.nextDate) - new Date()) / (1000 * 60 * 60 * 24));
+                return (
+                  <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{item.category?.icon}</span>
+                      <div>
+                        <p className="font-medium text-gray-900 text-sm">
+                          {item.description || item.category?.name}
+                        </p>
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <Clock className="w-3 h-3" />
+                          {daysUntil <= 0 ? (
+                            <span className="text-red-500 font-medium">Due!</span>
+                          ) : daysUntil === 1 ? (
+                            <span>Tomorrow</span>
+                          ) : (
+                            <span>In {daysUntil} days</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <p className={`font-semibold text-sm ${item.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                      {item.type === 'income' ? '+' : '-'}{formatCurrency(item.amount)}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

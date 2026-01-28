@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import TransactionForm from './pages/TransactionForm';
 import Budgets from './pages/Budgets';
+import Recurring from './pages/Recurring';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -102,6 +103,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Budgets />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recurring"
+        element={
+          <ProtectedRoute>
+            <Recurring />
           </ProtectedRoute>
         }
       />

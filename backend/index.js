@@ -8,6 +8,7 @@ const authRoutes = require('./src/routes/auth');
 const categoryRoutes = require('./src/routes/categories');
 const transactionRoutes = require('./src/routes/transactions');
 const budgetRoutes = require('./src/routes/budgets');
+const recurringRoutes = require('./src/routes/recurring');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -27,6 +28,7 @@ app.use('/auth', authRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/budgets', budgetRoutes);
+app.use('/recurring', recurringRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

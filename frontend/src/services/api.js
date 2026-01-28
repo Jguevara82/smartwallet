@@ -64,4 +64,16 @@ export const budgetsAPI = {
   delete: (id) => api.delete(`/budgets/${id}`),
 };
 
+// Recurring Transactions API
+export const recurringAPI = {
+  getAll: () => api.get('/recurring'),
+  getUpcoming: () => api.get('/recurring/upcoming'),
+  getById: (id) => api.get(`/recurring/${id}`),
+  create: (data) => api.post('/recurring', data),
+  update: (id, data) => api.put(`/recurring/${id}`, data),
+  delete: (id) => api.delete(`/recurring/${id}`),
+  process: () => api.post('/recurring/process'),
+  skip: (id) => api.post(`/recurring/${id}/skip`),
+};
+
 export default api;
