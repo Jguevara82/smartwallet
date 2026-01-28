@@ -1,178 +1,252 @@
-# SmartWallet - Personal Finance Tracker
+# SmartWallet 💰
 
-A full-stack expense tracker application built with the PERN stack (PostgreSQL, Express, React, Node.js) featuring JWT authentication, transaction management, and interactive charts.
+A full-stack personal finance tracker built with the **PERN stack** (PostgreSQL, Express, React, Node.js). Track your income, expenses, set budgets, and manage recurring transactions with a beautiful, modern UI.
 
-![Dashboard Preview](./screenshots/dashboard.png)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Node](https://img.shields.io/badge/node-18%2B-green.svg)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-blue.svg)
 
-## Features
+## ✨ Features
 
-- **🔐 Authentication**: Secure user registration and login with JWT tokens
-- **💰 Transaction Management**: Full CRUD for income and expenses
-- **📊 Dashboard**: Visual overview with balance summary and expense breakdown
-- **📈 Charts**: Interactive pie chart showing expenses by category (Recharts)
-- **🏷️ Categories**: Pre-defined categories for income and expenses with icons
-- **🔍 Filtering**: Filter transactions by type and search by description
+- **🔐 Secure Authentication** - JWT-based auth with password hashing (bcrypt)
+- **💰 Transaction Management** - Full CRUD for income and expenses
+- **📊 Visual Dashboard** - Balance overview with interactive charts (Recharts)
+- **📅 Recurring Transactions** - Automate bills, subscriptions, salary tracking
+- **🎯 Budget Management** - Set spending limits with visual alerts
+- **🏷️ Smart Categories** - Pre-defined categories with icons and colors
+- **📱 Responsive Design** - Works on desktop and mobile (TailwindCSS)
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| **Frontend** | React 18, Vite, TailwindCSS, Recharts, React Router |
+| **Frontend** | React 18, Vite, TailwindCSS, Recharts, React Router, Axios |
 | **Backend** | Node.js, Express, Prisma ORM |
 | **Database** | PostgreSQL |
-| **Auth** | JWT (JSON Web Tokens), bcryptjs |
+| **Auth** | JWT, bcryptjs |
 
-## Prerequisites
+## 📋 Prerequisites
 
-- Node.js 18+ 
-- PostgreSQL 14+
-- npm or yarn
+- **Node.js** 18 or higher
+- **PostgreSQL** 14+ (or Docker)
+- **npm** or **yarn**
 
-## Installation
+## 🚀 Quick Start
 
-### 1. Clone the repository
+### Option A: With Docker (Recommended)
+
+The easiest way to get started - Docker handles the database for you.
 
 ```bash
+# 1. Clone the repository
 git clone https://github.com/yourusername/smartwallet.git
 cd smartwallet
-```
 
-### 2. Set up the database
+# 2. Start PostgreSQL with Docker
+docker-compose up -d
 
-Create a PostgreSQL database:
-
-```sql
-CREATE DATABASE smartwallet;
-```
-
-### 3. Configure environment variables
-
-Create `backend/.env`:
-
-```env
-DATABASE_URL="postgresql://postgres:yourpassword@localhost:5432/smartwallet?schema=public"
-JWT_SECRET="your-super-secret-jwt-key"
-PORT=3000
-```
-
-### 4. Install dependencies and run migrations
-
-```bash
-# Backend
+# 3. Setup backend
 cd backend
+cp .env.example .env
 npm install
-npx prisma migrate dev
-npx prisma generate
+npm run setup
 
-# Frontend
-cd ../frontend
-npm install
-```
-
-### 5. Start the application
-
-```bash
-# Terminal 1 - Backend (http://localhost:3000)
-cd backend
-node index.js
-
-# Terminal 2 - Frontend (http://localhost:5173)
+# 4. Setup frontend (new terminal)
 cd frontend
-npm run dev
+npm install
+
+# 5. Start both servers
+# Terminal 1 (backend):
+cd backend && npm run dev
+
+# Terminal 2 (frontend):
+cd frontend && npm run dev
 ```
 
-## Project Structure
+Open http://localhost:5173 in your browser.
+
+### Option B: With Local PostgreSQL
+
+If you have PostgreSQL installed locally:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/yourusername/smartwallet.git
+cd smartwallet
+
+# 2. Create database
+psql -U postgres
+CREATE DATABASE smartwallet;
+\q
+
+# 3. Setup backend
+cd backend
+cp .env.example .env
+# Edit .env with your database credentials
+npm install
+npm run setup
+
+# 4. Seed categories (optional)
+npm run db:seed
+
+# 5. Setup frontend (new terminal)
+cd frontend
+npm install
+
+# 6. Start servers
+# Terminal 1: cd backend && npm run dev
+# Terminal 2: cd frontend && npm run dev
+```
+
+## ⚙️ Configuration
+
+### Backend Environment Variables
+
+Create `backend/.env` from the example:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Required variables:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://postgres:postgres@localhost:5432/smartwallet` |
+| `JWT_SECRET` | Secret key for JWT tokens | Use a random 64+ character string |
+| `PORT` | API server port | `3000` |
+
+**⚠️ Security Warning**: Never commit `.env` files! Generate a secure JWT secret with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+## 📁 Project Structure
 
 ```
 smartwallet/
-├── backend/
-│   ├── index.js              # Express app entry point
+├── backend/                 # Express API
+│   ├── src/
+│   │   ├── middleware/      # Auth middleware
+│   │   └── routes/          # API routes
 │   ├── prisma/
-│   │   └── schema.prisma     # Database schema
+│   │   ├── schema.prisma    # Database schema
+│   │   └── seed.js          # Category seeder
+│   └── index.js             # Server entry point
+│
+├── frontend/                # React SPA
 │   └── src/
-│       ├── middleware/
-│       │   └── auth.js       # JWT authentication middleware
-│       └── routes/
-│           ├── auth.js       # Register, login, me endpoints
-│           ├── categories.js # Category management
-│           └── transactions.js # Transaction CRUD
-├── frontend/
-│   └── src/
-│       ├── context/
-│       │   └── AuthContext.jsx  # Authentication state
-│       ├── services/
-│       │   └── api.js           # Axios API client
-│       └── pages/
-│           ├── Dashboard.jsx    # Main dashboard
-│           ├── Login.jsx        # Login page
-│           ├── Register.jsx     # Registration page
-│           ├── Transactions.jsx # Transaction list
-│           └── TransactionForm.jsx # Add/Edit form
+│       ├── context/         # Auth context
+│       ├── pages/           # Page components
+│       └── services/        # API client
+│
+├── docker-compose.yml       # PostgreSQL container
 └── README.md
 ```
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Authentication
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/auth/register` | Create new user account |
-| POST | `/auth/login` | Login and receive JWT token |
-| GET | `/auth/me` | Get current user info |
+| POST | `/auth/register` | Create new user |
+| POST | `/auth/login` | Login, get token |
+| GET | `/auth/me` | Get current user |
 
-### Categories
+### Transactions (🔒 Auth required)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/categories` | List all categories |
-| POST | `/categories/seed` | Create default categories |
-
-### Transactions (Requires Authentication)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/transactions` | List user's transactions |
-| GET | `/transactions/summary` | Get balance and statistics |
-| GET | `/transactions/:id` | Get single transaction |
-| POST | `/transactions` | Create new transaction |
+| GET | `/transactions` | List transactions |
+| GET | `/transactions/summary` | Get balance & stats |
+| POST | `/transactions` | Create transaction |
 | PUT | `/transactions/:id` | Update transaction |
 | DELETE | `/transactions/:id` | Delete transaction |
 
-## Database Schema
+### Budgets (🔒 Auth required)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/budgets` | List budgets with status |
+| GET | `/budgets/alerts` | Get over-budget alerts |
+| POST | `/budgets` | Create budget |
+| PUT | `/budgets/:id` | Update budget |
+| DELETE | `/budgets/:id` | Delete budget |
+
+### Recurring (🔒 Auth required)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/recurring` | List recurring transactions |
+| GET | `/recurring/upcoming` | Next 30 days |
+| POST | `/recurring` | Create recurring |
+| POST | `/recurring/process` | Generate due transactions |
+| POST | `/recurring/:id/skip` | Skip next occurrence |
+
+### Categories
+| Method | Endpoint | Description |
+|----------|-------------|---------|
+| GET | `/categories` | List all categories |
+| POST | `/categories/seed` | Create default categories |
+
+## 🗃️ Database Schema
 
 ```
-User (1) ──────< Transaction >────── (1) Category
+User ──┬── Transaction ──── Category
+       ├── Budget ────────── Category
+       └── RecurringTransaction ── Category
 ```
 
-- **User**: id, email, password (hashed), name, timestamps
-- **Category**: id, name, type (income/expense), icon, color
-- **Transaction**: id, amount, description, type, date, userId, categoryId
+**Models:**
+- **User**: Authentication and ownership
+- **Category**: Transaction classification (income/expense)
+- **Transaction**: Individual income/expense records
+- **Budget**: Spending limits per category
+- **RecurringTransaction**: Automated transaction templates
 
-## Screenshots
+## 🧪 Development
 
-### Login Page
-![Login](./screenshots/login.png)
-
-### Dashboard with Charts
-![Dashboard](./screenshots/dashboard.png)
-
-### Transaction List
-![Transactions](./screenshots/transactions.png)
-
-### Add Transaction
-![Add Transaction](./screenshots/add-transaction.png)
-
-## Development
+### Useful Commands
 
 ```bash
-# Run Prisma Studio (database GUI)
-cd backend && npx prisma studio
+# Backend
+npm run dev          # Start with watch mode
+npm run db:studio    # Open Prisma Studio (GUI)
+npm run db:migrate   # Create migration
+npm run db:seed      # Seed categories
 
-# Create new migration after schema changes
-cd backend && npx prisma migrate dev --name migration_name
-
-# Build frontend for production
-cd frontend && npm run build
+# Frontend
+npm run dev          # Start dev server
+npm run build        # Production build
+npm run preview      # Preview production build
 ```
 
-## License
+### Database Migrations
 
-MIT
+After modifying `prisma/schema.prisma`:
+
+```bash
+cd backend
+npx prisma migrate dev --name your_migration_name
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Prisma](https://www.prisma.io/) - Next-generation ORM
+- [Recharts](https://recharts.org/) - Composable charting library
+- [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS
+- [Lucide](https://lucide.dev/) - Beautiful icons
+
+---
+
+Made with ❤️
