@@ -24,9 +24,10 @@ React Frontend (Vite) → Express API → Prisma ORM → PostgreSQL
 4. Backend `authMiddleware` validates token and extracts `userId`
 
 ### Data Models ([backend/prisma/schema.prisma](../backend/prisma/schema.prisma))
-- **User**: `id`, `email` (unique), `password` (hashed), `name`, has many `Transaction`
+- **User**: `id`, `email` (unique), `password` (hashed), `name`, has many `Transaction` and `Budget`
 - **Category**: `id`, `name`, `type` (income|expense), `icon`, `color`
 - **Transaction**: `id`, `amount`, `description`, `type`, `date`, belongs to `User` and `Category`
+- **Budget**: `id`, `amount`, `period` (weekly|monthly|yearly), `alertThreshold`, belongs to `User` and `Category`
 
 ## Developer Workflows
 
@@ -67,7 +68,8 @@ backend/
 │   └── routes/
 │       ├── auth.js          # POST /auth/register, /auth/login, GET /auth/me
 │       ├── categories.js    # GET /categories, POST /categories/seed
-│       └── transactions.js  # Full CRUD with auth protection
+│       ├── transactions.js  # Full CRUD with auth protection
+│       └── budgets.js       # Budget CRUD with spending status calculation
 ```
 
 ### API Pattern
@@ -93,9 +95,10 @@ frontend/src/
 └── pages/
     ├── Login.jsx            # Login form
     ├── Register.jsx         # Registration form
-    ├── Dashboard.jsx        # Summary cards + Pie chart (Recharts)
+    ├── Dashboard.jsx        # Summary cards + Pie chart (Recharts) + Budget status
     ├── Transactions.jsx     # Transaction list with filters
-    └── TransactionForm.jsx  # Add/Edit transaction form
+    ├── TransactionForm.jsx  # Add/Edit transaction form
+    └── Budgets.jsx          # Budget management with progress bars
 ```
 
 ### Frontend Patterns
@@ -138,5 +141,23 @@ api.interceptors.request.use((config) => {
 - `POST /transactions` - Create transaction
 - `PUT /transactions/:id` - Update transaction
 - `DELETE /transactions/:id` - Delete transaction
-- Charts for spending visualization
-- Monthly/yearly expense reports
+
+### Budgets (token required)
+- `GET /budgets` - List budgets with current spending status
+- `GET /budgets/alerts` - Get budgets exceeding threshold
+- `POST /budgets` - Create budget for a category
+- `PUT /budgets/:id` - Update budget amount/threshold
+- `DELETE /budgets/:id` - Delete budget
+
+## Budget System
+
+### How Budgets Work
+1. User sets budget amount per expense category (e.g., $500/month for Food)
+2. System calculates current spending in that period automatically
+3. Visual progress bar shows percentage used (green → yellow → red)
+4. Alerts appear when spending reaches `alertThreshold` (default 80%)
+
+### Budget Status Values
+- `ok` (green): Under threshold
+- `warning` (yellow): Above threshold but under limit
+- `exceeded` (red): Over budget limit

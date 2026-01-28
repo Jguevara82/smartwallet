@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import TransactionForm from './pages/TransactionForm';
+import Budgets from './pages/Budgets';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -93,6 +94,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <TransactionForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/budgets"
+        element={
+          <ProtectedRoute>
+            <Budgets />
           </ProtectedRoute>
         }
       />

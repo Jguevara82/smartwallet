@@ -54,4 +54,14 @@ export const transactionsAPI = {
   delete: (id) => api.delete(`/transactions/${id}`),
 };
 
+// Budgets API
+export const budgetsAPI = {
+  getAll: () => api.get('/budgets'),
+  getAlerts: () => api.get('/budgets/alerts'),
+  getById: (id) => api.get(`/budgets/${id}`),
+  create: (data) => api.post('/budgets', data),
+  update: (id, data) => api.put(`/budgets/${id}`, data),
+  delete: (id) => api.delete(`/budgets/${id}`),
+};
+
 export default api;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { transactionsAPI, categoriesAPI } from '../services/api';
+import { transactionsAPI, categoriesAPI, budgetsAPI } from '../services/api';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { 
   TrendingUp, 
@@ -9,7 +9,9 @@ import {
   Wallet, 
   Plus, 
   LogOut,
-  RefreshCw
+  RefreshCw,
+  AlertTriangle,
+  Target
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -17,6 +19,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,14 +32,16 @@ const Dashboard = () => {
       // Seed categories if needed
       await categoriesAPI.seed();
       
-      // Load summary and recent transactions
-      const [summaryRes, transactionsRes] = await Promise.all([
+      // Load summary, recent transactions, and budgets
+      const [summaryRes, transactionsRes, budgetsRes] = await Promise.all([
         transactionsAPI.getSummary(),
         transactionsAPI.getAll(),
+        budgetsAPI.getAll(),
       ]);
       
       setSummary(summaryRes.data);
       setTransactions(transactionsRes.data.slice(0, 5)); // Last 5 transactions
+      setBudgets(budgetsRes.data);
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
@@ -188,46 +193,136 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Recent Transactions */}
+          {/* Budget Status */}
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Recent Transactions</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Budget Status</h2>
               <button
-                onClick={() => navigate('/transactions')}
+                onClick={() => navigate('/budgets')}
                 className="text-blue-600 hover:text-blue-700 text-sm font-medium"
               >
-                View All
+                Manage Budgets
               </button>
             </div>
             
-            {transactions.length > 0 ? (
+            {budgets.length > 0 ? (
               <div className="space-y-4">
-                {transactions.map((transaction) => (
-                  <div
-                    key={transaction.id}
-                    className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{transaction.category?.icon || '📦'}</span>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {transaction.description || transaction.category?.name}
-                        </p>
-                        <p className="text-sm text-gray-500">{formatDate(transaction.date)}</p>
+                {budgets.slice(0, 4).map((budget) => (
+                  <div key={budget.id} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span>{budget.category?.icon}</span>
+                        <span className="text-sm font-medium text-gray-900">{budget.category?.name}</span>
+                        {budget.status === 'exceeded' && (
+                          <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">Exceeded</span>
+                        )}
+                        {budget.status === 'warning' && (
+                          <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">Warning</span>
+                        )}
                       </div>
+                      <span className="text-sm text-gray-600">
+                        {formatCurrency(budget.spent)} / {formatCurrency(budget.amount)}
+                      </span>
                     </div>
-                    <p className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                      {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                    </p>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          budget.status === 'exceeded' ? 'bg-red-500' :
+                          budget.status === 'warning' ? 'bg-yellow-500' : 'bg-green-500'
+                        }`}
+                        style={{ width: `${Math.min(budget.percentage, 100)}%` }}
+                      />
+                    </div>
                   </div>
                 ))}
+                {budgets.length > 4 && (
+                  <button
+                    onClick={() => navigate('/budgets')}
+                    className="text-blue-600 hover:text-blue-700 text-sm"
+                  >
+                    View {budgets.length - 4} more budgets
+                  </button>
+                )}
               </div>
             ) : (
-              <div className="h-[200px] flex items-center justify-center text-gray-500">
-                <p>No transactions yet.</p>
+              <div className="h-[200px] flex flex-col items-center justify-center text-gray-500">
+                <Target className="w-12 h-12 text-gray-300 mb-2" />
+                <p className="mb-2">No budgets set</p>
+                <button
+                  onClick={() => navigate('/budgets')}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                >
+                  Create a budget
+                </button>
               </div>
             )}
           </div>
+        </div>
+
+        {/* Budget Alerts */}
+        {budgets.filter(b => b.status !== 'ok').length > 0 && (
+          <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-600" />
+              <h3 className="font-semibold text-yellow-800">Budget Alerts</h3>
+            </div>
+            <div className="space-y-2">
+              {budgets.filter(b => b.status !== 'ok').map((budget) => (
+                <div key={budget.id} className="flex items-center justify-between text-sm">
+                  <span className="text-yellow-800">
+                    {budget.category?.icon} {budget.category?.name}: {budget.percentage.toFixed(0)}% used
+                  </span>
+                  <span className={budget.status === 'exceeded' ? 'text-red-600 font-medium' : 'text-yellow-700'}>
+                    {budget.status === 'exceeded' 
+                      ? `${formatCurrency(Math.abs(budget.remaining))} over budget`
+                      : `${formatCurrency(budget.remaining)} left`
+                    }
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Recent Transactions */}
+        <div className="mt-8 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Transactions</h2>
+            <button
+              onClick={() => navigate('/transactions')}
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              View All
+            </button>
+          </div>
+          
+          {transactions.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {transactions.map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{transaction.category?.icon || '📦'}</span>
+                    <div>
+                      <p className="font-medium text-gray-900 text-sm">
+                        {transaction.description || transaction.category?.name}
+                      </p>
+                      <p className="text-xs text-gray-500">{formatDate(transaction.date)}</p>
+                    </div>
+                  </div>
+                  <p className={`font-semibold text-sm ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                    {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="h-[100px] flex items-center justify-center text-gray-500">
+              <p>No transactions yet.</p>
+            </div>
+          )}
         </div>
 
         {/* Add Transaction FAB */}

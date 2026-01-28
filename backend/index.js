@@ -7,6 +7,7 @@ const { PrismaClient } = require('@prisma/client');
 const authRoutes = require('./src/routes/auth');
 const categoryRoutes = require('./src/routes/categories');
 const transactionRoutes = require('./src/routes/transactions');
+const budgetRoutes = require('./src/routes/budgets');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/transactions', transactionRoutes);
+app.use('/budgets', budgetRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

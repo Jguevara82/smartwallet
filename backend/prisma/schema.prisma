@@ -18,6 +18,7 @@ model User {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   transactions Transaction[]
+  budgets      Budget[]
 }
 
 model Category {
@@ -27,6 +28,7 @@ model Category {
   icon         String?
   color        String?
   transactions Transaction[]
+  budgets      Budget[]
 }
 
 model Transaction {
@@ -41,4 +43,19 @@ model Transaction {
   userId      String
   category    Category @relation(fields: [categoryId], references: [id])
   categoryId  String
+}
+
+model Budget {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  amount         Float    // Budget limit amount
+  period         String   @default("monthly") // "weekly" | "monthly" | "yearly"
+  alertThreshold Float    @default(0.8) // Alert when spending reaches this % (0.8 = 80%)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  category       Category @relation(fields: [categoryId], references: [id])
+  categoryId     String
+
+  @@unique([userId, categoryId, period]) // One budget per category per period per user
 }
