@@ -4,7 +4,8 @@
   "description": "SmartWallet API - Personal Finance Tracker Backend",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "prisma migrate deploy && node index.js",
+    "start:dev": "node index.js",
     "dev": "node --watch index.js",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
