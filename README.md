@@ -2,7 +2,9 @@
 
 A full-stack personal finance tracker built with the **PERN stack** (PostgreSQL, Express, React, Node.js). Track your income, expenses, set budgets, and manage recurring transactions with a beautiful, modern UI.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+[![CI](https://github.com/Jguevara82/smartwallet/actions/workflows/ci.yml/badge.svg)](https://github.com/Jguevara82/smartwallet/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://smartwallet-five-ruby.vercel.app)
 ![Node](https://img.shields.io/badge/node-18%2B-green.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-blue.svg)
 
