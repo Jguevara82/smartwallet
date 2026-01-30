@@ -1,6 +1,15 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Get API URL from environment (Vite uses import.meta.env)
+const getApiUrl = () => {
+  try {
+    return import.meta.env?.VITE_API_URL || 'http://localhost:3000';
+  } catch {
+    return 'http://localhost:3000';
+  }
+};
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
