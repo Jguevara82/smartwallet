@@ -16,6 +16,11 @@ A full-stack personal finance tracker built with the **PERN stack** (PostgreSQL,
 - **🏷️ Smart Categories** - Pre-defined categories with icons and colors
 - **📱 Responsive Design** - Works on desktop and mobile (TailwindCSS)
 
+## 🎬 Demo
+
+![Dashboard](images/dashboard.png)
+![Transactions](images/transactions.png)
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
@@ -39,7 +44,7 @@ The easiest way to get started - Docker handles the database for you.
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/smartwallet.git
+git clone https://github.com/Jguevara82/smartwallet.git
 cd smartwallet
 
 # 2. Start PostgreSQL with Docker
@@ -71,7 +76,7 @@ If you have PostgreSQL installed locally:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/smartwallet.git
+git clone https://github.com/Jguevara82/smartwallet.git
 cd smartwallet
 
 # 2. Create database
@@ -121,6 +126,40 @@ Required variables:
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
+
+## 🌐 Deployment
+
+### Frontend (Vercel)
+
+1. Import the repository into Vercel
+2. Set **Root Directory** to `frontend`
+3. Build Command: `npm run build`
+4. Output Directory: `dist`
+5. Add environment variable:
+
+| Variable | Value |
+|----------|-------|
+| `VITE_API_URL` | Your Railway backend URL (e.g. `https://smartwallet-api.up.railway.app`) |
+
+### Backend (Railway)
+
+1. Import the repository into Railway
+2. Set **Root Directory** to `backend`
+3. Start Command: `npm start`
+4. Add environment variables:
+
+| Variable | Value |
+|----------|-------|
+| `DATABASE_URL` | PostgreSQL connection string (Railway provides this) |
+| `JWT_SECRET` | Random 64+ character string |
+| `PORT` | `3000` |
+| `FRONTEND_URL` | Your Vercel domain (comma-separated for multiple) |
+
+## ✅ CI/CD
+
+GitHub Actions CI runs frontend tests/build and backend Prisma generation on every push/PR to `main`.
+
+See: [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 ## 📁 Project Structure
 
