@@ -11,25 +11,74 @@ router.use(authMiddleware);
 // GET /transactions - Get all transactions for current user
 router.get('/', async (req, res) => {
   try {
-    const { type, categoryId, startDate, endDate } = req.query;
-    
+    const {
+      type,
+      categoryId,
+      startDate,
+      endDate,
+      search,
+      minAmount,
+      maxAmount,
+      sortBy = 'date',
+      sortOrder = 'desc',
+      page = 1,
+      limit = 20,
+    } = req.query;
+
     const where = { userId: req.user.userId };
-    
+
     if (type) where.type = type;
     if (categoryId) where.categoryId = categoryId;
+
     if (startDate || endDate) {
       where.date = {};
       if (startDate) where.date.gte = new Date(startDate);
-      if (endDate) where.date.lte = new Date(endDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        where.date.lte = end;
+      }
     }
 
-    const transactions = await prisma.transaction.findMany({
-      where,
-      include: { category: true },
-      orderBy: { date: 'desc' },
-    });
+    if (search) {
+      where.description = { contains: search, mode: 'insensitive' };
+    }
 
-    res.json(transactions);
+    if (minAmount || maxAmount) {
+      where.amount = {};
+      if (minAmount) where.amount.gte = parseFloat(minAmount);
+      if (maxAmount) where.amount.lte = parseFloat(maxAmount);
+    }
+
+    // Validate sort field
+    const allowedSortFields = ['date', 'amount', 'createdAt'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'date';
+    const order = sortOrder === 'asc' ? 'asc' : 'desc';
+
+    const pageNum = Math.max(1, parseInt(page));
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
+    const skip = (pageNum - 1) * limitNum;
+
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where,
+        include: { category: true },
+        orderBy: { [sortField]: order },
+        skip,
+        take: limitNum,
+      }),
+      prisma.transaction.count({ where }),
+    ]);
+
+    res.json({
+      data: transactions,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    });
   } catch (error) {
     console.error('Get transactions error:', error);
     res.status(500).json({ error: 'Internal server error.' });

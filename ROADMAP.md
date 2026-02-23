@@ -11,11 +11,11 @@
 - [x] CI/CD pipeline
 
 ## 🚧 v1.1.0 (Planned)
-- [ ] Export to CSV/PDF
+- [x] Transaction search and filters
 - [ ] Dark mode
+- [ ] Export to CSV/PDF
 - [ ] Multi-currency support
 - [ ] Email notifications for budget alerts
-- [ ] Transaction search and filters
 
 ## 🔮 v2.0.0 (Future)
 - [ ] Mobile app (React Native)

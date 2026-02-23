@@ -44,7 +44,7 @@ const Dashboard = () => {
       ]);
       
       setSummary(summaryRes.data);
-      setTransactions(transactionsRes.data.slice(0, 5)); // Last 5 transactions
+      setTransactions((transactionsRes.data.data || transactionsRes.data).slice(0, 5)); // Last 5 transactions
       setBudgets(budgetsRes.data);
       setUpcomingRecurring(upcomingRes.data.slice(0, 5)); // Next 5 upcoming
     } catch (error) {
