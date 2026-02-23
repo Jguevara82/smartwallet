@@ -12,7 +12,8 @@ A full-stack personal finance tracker built with the **PERN stack** (PostgreSQL,
 
 - **🔐 Secure Authentication** - JWT-based auth with password hashing (bcrypt)
 - **💰 Transaction Management** - Full CRUD for income and expenses
-- **📊 Visual Dashboard** - Balance overview with interactive charts (Recharts)
+- **� Advanced Search & Filters** - Server-side search, filter by type/category/date/amount, sorting, and pagination
+- **�📊 Visual Dashboard** - Balance overview with interactive charts (Recharts)
 - **📅 Recurring Transactions** - Automate bills, subscriptions, salary tracking
 - **🎯 Budget Management** - Set spending limits with visual alerts
 - **🏷️ Smart Categories** - Pre-defined categories with icons and colors
@@ -198,11 +199,35 @@ smartwallet/
 ### Transactions (🔒 Auth required)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/transactions` | List transactions |
+| GET | `/transactions` | List transactions (with search, filters, sorting & pagination) |
 | GET | `/transactions/summary` | Get balance & stats |
 | POST | `/transactions` | Create transaction |
 | PUT | `/transactions/:id` | Update transaction |
 | DELETE | `/transactions/:id` | Delete transaction |
+
+#### Query Parameters for `GET /transactions`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `search` | string | Case-insensitive search on description |
+| `type` | string | Filter by `income` or `expense` |
+| `categoryId` | string | Filter by category ID |
+| `startDate` | string | Start of date range (ISO date) |
+| `endDate` | string | End of date range (ISO date) |
+| `minAmount` | number | Minimum transaction amount |
+| `maxAmount` | number | Maximum transaction amount |
+| `sortBy` | string | Sort field: `date` (default), `amount`, `createdAt` |
+| `sortOrder` | string | `asc` or `desc` (default) |
+| `page` | number | Page number (default: 1) |
+| `limit` | number | Items per page (default: 20, max: 100) |
+
+Response format:
+```json
+{
+  "data": [ { ...transaction } ],
+  "pagination": { "page": 1, "limit": 20, "total": 57, "totalPages": 3 }
+}
+```
 
 ### Budgets (🔒 Auth required)
 | Method | Endpoint | Description |

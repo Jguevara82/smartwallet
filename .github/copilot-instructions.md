@@ -77,7 +77,7 @@ smartwallet/
 │           ├── Login.jsx
 │           ├── Register.jsx
 │           ├── Dashboard.jsx       # Overview + charts + alerts
-│           ├── Transactions.jsx    # List with filters
+│           ├── Transactions.jsx    # List with search, filters, sorting & pagination
 │           ├── TransactionForm.jsx # Add/edit form
 │           ├── Budgets.jsx         # Budget management
 │           └── Recurring.jsx       # Recurring transactions
@@ -160,9 +160,10 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Usage in components
-const response = await transactionsAPI.getAll();
-setTransactions(response.data);
+// Usage in components (paginated response)
+const response = await transactionsAPI.getAll({ page: 1, limit: 20, search: 'groceries' });
+setTransactions(response.data.data);
+const { page, total, totalPages } = response.data.pagination;
 ```
 
 ### Frontend Component Pattern
@@ -191,7 +192,9 @@ setTransactions(response.data);
 - `POST /categories/seed` - Create default categories
 
 ### Transactions (protected)
-- `GET /transactions` - List user's transactions
+- `GET /transactions` - List user's transactions (supports search, filters, sorting & pagination)
+  - Query params: `search`, `type`, `categoryId`, `startDate`, `endDate`, `minAmount`, `maxAmount`, `sortBy`, `sortOrder`, `page`, `limit`
+  - Returns `{ data: [...], pagination: { page, limit, total, totalPages } }`
 - `GET /transactions/summary` - Balance, totals, by-category
 - `POST /transactions` - Create transaction
 - `PUT /transactions/:id` - Update transaction
@@ -219,11 +222,14 @@ setTransactions(response.data);
 2. **Passwords**: Hash with bcryptjs (10 salt rounds)
 3. **JWT**: 7-day expiration, contains `userId` and `email`
 4. **API Responses**: Return JSON, errors use `{ error: "message" }`
-5. **Styling**: TailwindCSS utilities only - no separate CSS files
-6. **Icons**: Use lucide-react for UI, emoji for categories
-7. **Charts**: Recharts for data visualization
-8. **Forms**: Controlled components with useState
-9. **Routing**: React Router v7 with protected routes
+5. **Paginated Lists**: Return `{ data: [...], pagination: { page, limit, total, totalPages } }`
+6. **Styling**: TailwindCSS utilities only - no separate CSS files
+7. **Icons**: Use lucide-react for UI, emoji for categories
+8. **Charts**: Recharts for data visualization
+9. **Forms**: Controlled components with useState
+10. **Routing**: React Router v7 with protected routes
+11. **Search**: Server-side with Prisma `contains` + `mode: 'insensitive'`
+12. **Filtering**: Query params passed to Prisma `where` clauses
 
 ## Budget System
 
