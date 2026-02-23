@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { transactionsAPI, categoriesAPI } from '../services/api';
 import { ArrowLeft, Save, AlertCircle } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle';
 
 const TransactionForm = () => {
   const navigate = useNavigate();
@@ -91,40 +92,41 @@ const TransactionForm = () => {
 
   if (loadingData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {isEditing ? 'Edit Transaction' : 'New Transaction'}
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 {isEditing ? 'Update your transaction details' : 'Add a new income or expense'}
               </p>
             </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700">
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg flex items-center gap-3 text-red-700 dark:text-red-400">
               <AlertCircle className="w-5 h-5 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -133,7 +135,7 @@ const TransactionForm = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Type Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 Transaction Type
               </label>
               <div className="flex gap-4">
@@ -148,8 +150,8 @@ const TransactionForm = () => {
                   />
                   <div className={`p-4 rounded-lg border-2 cursor-pointer text-center transition ${
                     formData.type === 'expense'
-                      ? 'border-red-500 bg-red-50 text-red-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                      : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
                   }`}>
                     <span className="text-2xl mb-2 block">💸</span>
                     <span className="font-medium">Expense</span>
@@ -166,8 +168,8 @@ const TransactionForm = () => {
                   />
                   <div className={`p-4 rounded-lg border-2 cursor-pointer text-center transition ${
                     formData.type === 'income'
-                      ? 'border-green-500 bg-green-50 text-green-700'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                      : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
                   }`}>
                     <span className="text-2xl mb-2 block">💰</span>
                     <span className="font-medium">Income</span>
@@ -178,11 +180,11 @@ const TransactionForm = () => {
 
             {/* Amount */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Amount
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-lg">$</span>
                 <input
                   type="number"
                   name="amount"
@@ -190,7 +192,7 @@ const TransactionForm = () => {
                   onChange={handleChange}
                   step="0.01"
                   min="0.01"
-                  className="w-full pl-8 pr-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="0.00"
                   required
                 />
@@ -199,7 +201,7 @@ const TransactionForm = () => {
 
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Category
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -216,8 +218,8 @@ const TransactionForm = () => {
                     <div
                       className={`p-3 rounded-lg border-2 cursor-pointer text-center transition ${
                         formData.categoryId === category.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                       }`}
                       style={{
                         borderColor: formData.categoryId === category.id ? category.color : undefined,
@@ -225,19 +227,19 @@ const TransactionForm = () => {
                       }}
                     >
                       <span className="text-xl">{category.icon}</span>
-                      <p className="text-sm font-medium mt-1 truncate">{category.name}</p>
+                      <p className="text-sm font-medium mt-1 truncate text-gray-900 dark:text-white">{category.name}</p>
                     </div>
                   </label>
                 ))}
               </div>
               {filteredCategories.length === 0 && (
-                <p className="text-gray-500 text-center py-4">No categories available.</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">No categories available.</p>
               )}
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Description (optional)
               </label>
               <input
@@ -245,14 +247,14 @@ const TransactionForm = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="e.g., Grocery shopping at Walmart"
               />
             </div>
 
             {/* Date */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Date
               </label>
               <input
@@ -260,7 +262,7 @@ const TransactionForm = () => {
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 required
               />
             </div>

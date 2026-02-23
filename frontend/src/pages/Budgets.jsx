@@ -10,6 +10,7 @@ import {
   CheckCircle,
   XCircle
 } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle';
 
 const Budgets = () => {
   const navigate = useNavigate();
@@ -139,34 +140,37 @@ const Budgets = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate('/dashboard')}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Budgets</h1>
-                <p className="text-gray-600">Set spending limits by category</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Budgets</h1>
+                <p className="text-gray-600 dark:text-gray-400">Set spending limits by category</p>
               </div>
             </div>
-            <button
-              onClick={() => {
-                setEditingBudget(null);
-                resetForm();
-                setShowForm(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
-            >
-              <Plus className="w-5 h-5" />
-              New Budget
-            </button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <button
+                onClick={() => {
+                  setEditingBudget(null);
+                  resetForm();
+                  setShowForm(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+              >
+                <Plus className="w-5 h-5" />
+                New Budget
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -175,26 +179,26 @@ const Budgets = () => {
         {/* Budget Form Modal */}
         {showForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
                 {editingBudget ? 'Edit Budget' : 'Create Budget'}
               </h2>
 
               {formError && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
                   {formError}
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Category
                   </label>
                   <select
                     value={formData.categoryId}
                     onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     required
                     disabled={!!editingBudget}
                   >
@@ -208,16 +212,16 @@ const Budgets = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Budget Amount
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">$</span>
                     <input
                       type="number"
                       value={formData.amount}
                       onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                      className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                       placeholder="500"
                       min="1"
                       step="0.01"
@@ -227,13 +231,13 @@ const Budgets = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Period
                   </label>
                   <select
                     value={formData.period}
                     onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     disabled={!!editingBudget}
                   >
                     <option value="weekly">Weekly</option>
@@ -243,20 +247,20 @@ const Budgets = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Alert Threshold
                   </label>
                   <select
                     value={formData.alertThreshold}
                     onChange={(e) => setFormData({ ...formData, alertThreshold: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="0.5">50% - Early warning</option>
                     <option value="0.7">70% - Standard</option>
                     <option value="0.8">80% - Default</option>
                     <option value="0.9">90% - Late warning</option>
                   </select>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     You'll see a warning when spending reaches this percentage
                   </p>
                 </div>
@@ -269,7 +273,7 @@ const Budgets = () => {
                       setEditingBudget(null);
                       resetForm();
                     }}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     Cancel
                   </button>
@@ -296,27 +300,27 @@ const Budgets = () => {
             {budgets.map((budget) => (
               <div
                 key={budget.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{budget.category?.icon}</span>
                     <div>
-                      <h3 className="font-semibold text-gray-900">{budget.category?.name}</h3>
-                      <p className="text-sm text-gray-500 capitalize">{budget.period}</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{budget.category?.name}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">{budget.period}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     {getStatusIcon(budget.status)}
                     <button
                       onClick={() => handleEdit(budget)}
-                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition"
+                      className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(budget.id)}
-                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition"
+                      className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -326,14 +330,14 @@ const Budgets = () => {
                 {/* Progress Bar */}
                 <div className="mb-3">
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 dark:text-gray-400">
                       {formatCurrency(budget.spent)} spent
                     </span>
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {formatCurrency(budget.amount)}
                     </span>
                   </div>
-                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${getProgressColor(budget.status)}`}
                       style={{ width: `${Math.min(budget.percentage, 100)}%` }}
@@ -343,26 +347,26 @@ const Budgets = () => {
 
                 {/* Stats */}
                 <div className="flex justify-between text-sm">
-                  <span className={budget.remaining >= 0 ? 'text-green-600' : 'text-red-600'}>
+                  <span className={budget.remaining >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
                     {budget.remaining >= 0 
                       ? `${formatCurrency(budget.remaining)} left`
                       : `${formatCurrency(Math.abs(budget.remaining))} over`
                     }
                   </span>
-                  <span className="text-gray-500">
+                  <span className="text-gray-500 dark:text-gray-400">
                     {budget.percentage.toFixed(0)}% used
                   </span>
                 </div>
 
                 {/* Alert Message */}
                 {budget.status === 'exceeded' && (
-                  <div className="mt-3 p-2 bg-red-50 rounded-lg text-red-700 text-sm flex items-center gap-2">
+                  <div className="mt-3 p-2 bg-red-50 dark:bg-red-900/30 rounded-lg text-red-700 dark:text-red-400 text-sm flex items-center gap-2">
                     <XCircle className="w-4 h-4 flex-shrink-0" />
                     Budget exceeded!
                   </div>
                 )}
                 {budget.status === 'warning' && (
-                  <div className="mt-3 p-2 bg-yellow-50 rounded-lg text-yellow-700 text-sm flex items-center gap-2">
+                  <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg text-yellow-700 dark:text-yellow-400 text-sm flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                     Approaching limit ({budget.percentage.toFixed(0)}%)
                   </div>
@@ -371,10 +375,10 @@ const Budgets = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-12 text-center">
             <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No budgets yet</h3>
-            <p className="text-gray-500 mb-4">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No budgets yet</h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
               Create budgets to track your spending by category
             </p>
             <button

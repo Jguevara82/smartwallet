@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { transactionsAPI, categoriesAPI, budgetsAPI, recurringAPI } from '../services/api';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { 
@@ -15,9 +16,11 @@ import {
   Calendar,
   Clock
 } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -76,7 +79,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -90,45 +93,46 @@ const Dashboard = () => {
   })) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">SmartWallet</h1>
-            <p className="text-gray-600">Welcome back, {user?.name || user?.email}!</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">SmartWallet</h1>
+            <p className="text-gray-600 dark:text-gray-400">Welcome back, {user?.name || user?.email}!</p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/transactions')}
-              className="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition text-sm font-medium"
+              className="px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition text-sm font-medium"
             >
               Transactions
             </button>
             <button
               onClick={() => navigate('/budgets')}
-              className="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition text-sm font-medium"
+              className="px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition text-sm font-medium"
             >
               Budgets
             </button>
             <button
               onClick={() => navigate('/recurring')}
-              className="px-3 py-2 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition text-sm font-medium flex items-center gap-1"
+              className="px-3 py-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg transition text-sm font-medium flex items-center gap-1"
             >
               <Calendar className="w-4 h-4" />
               Recurring
             </button>
-            <div className="w-px h-6 bg-gray-300 mx-2" />
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-2" />
+            <ThemeToggle />
             <button
               onClick={loadData}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
               title="Refresh"
             >
               <RefreshCw className="w-5 h-5" />
             </button>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+              className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
             >
               <LogOut className="w-5 h-5" />
               Logout
@@ -140,44 +144,44 @@ const Dashboard = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Balance</p>
-                <p className={`text-3xl font-bold ${summary?.balance >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Balance</p>
+                <p className={`text-3xl font-bold ${summary?.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400'}`}>
                   {formatCurrency(summary?.balance || 0)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <Wallet className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center">
+                <Wallet className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Income</p>
-                <p className="text-3xl font-bold text-green-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Income</p>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                   {formatCurrency(summary?.totalIncome || 0)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Expenses</p>
-                <p className="text-3xl font-bold text-red-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Expenses</p>
+                <p className="text-3xl font-bold text-red-600 dark:text-red-400">
                   {formatCurrency(summary?.totalExpenses || 0)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <TrendingDown className="w-6 h-6 text-red-600" />
+              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center">
+                <TrendingDown className="w-6 h-6 text-red-600 dark:text-red-400" />
               </div>
             </div>
           </div>
@@ -185,8 +189,8 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Expenses by Category Chart */}
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Expenses by Category</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Expenses by Category</h2>
             {chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -207,24 +211,32 @@ const Dashboard = () => {
                   </Pie>
                   <Tooltip 
                     formatter={(value) => formatCurrency(value)}
+                    contentStyle={{
+                      backgroundColor: isDark ? '#1f2937' : '#ffffff',
+                      border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
+                      borderRadius: '8px',
+                      color: isDark ? '#f3f4f6' : '#111827',
+                    }}
                   />
-                  <Legend />
+                  <Legend 
+                    wrapperStyle={{ color: isDark ? '#d1d5db' : '#374151' }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[300px] flex items-center justify-center text-gray-500">
+              <div className="h-[300px] flex items-center justify-center text-gray-500 dark:text-gray-400">
                 <p>No expense data yet. Add some transactions!</p>
               </div>
             )}
           </div>
 
           {/* Budget Status */}
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Budget Status</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Budget Status</h2>
               <button
                 onClick={() => navigate('/budgets')}
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium"
               >
                 Manage Budgets
               </button>
@@ -237,19 +249,19 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span>{budget.category?.icon}</span>
-                        <span className="text-sm font-medium text-gray-900">{budget.category?.name}</span>
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">{budget.category?.name}</span>
                         {budget.status === 'exceeded' && (
-                          <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">Exceeded</span>
+                          <span className="px-2 py-0.5 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 text-xs rounded-full">Exceeded</span>
                         )}
                         {budget.status === 'warning' && (
-                          <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">Warning</span>
+                          <span className="px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400 text-xs rounded-full">Warning</span>
                         )}
                       </div>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         {formatCurrency(budget.spent)} / {formatCurrency(budget.amount)}
                       </span>
                     </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${
                           budget.status === 'exceeded' ? 'bg-red-500' :
@@ -263,19 +275,19 @@ const Dashboard = () => {
                 {budgets.length > 4 && (
                   <button
                     onClick={() => navigate('/budgets')}
-                    className="text-blue-600 hover:text-blue-700 text-sm"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm"
                   >
                     View {budgets.length - 4} more budgets
                   </button>
                 )}
               </div>
             ) : (
-              <div className="h-[200px] flex flex-col items-center justify-center text-gray-500">
-                <Target className="w-12 h-12 text-gray-300 mb-2" />
+              <div className="h-[200px] flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                <Target className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-2" />
                 <p className="mb-2">No budgets set</p>
                 <button
                   onClick={() => navigate('/budgets')}
-                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium"
                 >
                   Create a budget
                 </button>
@@ -286,18 +298,18 @@ const Dashboard = () => {
 
         {/* Budget Alerts */}
         {budgets.filter(b => b.status !== 'ok').length > 0 && (
-          <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <div className="mt-8 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-600" />
-              <h3 className="font-semibold text-yellow-800">Budget Alerts</h3>
+              <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+              <h3 className="font-semibold text-yellow-800 dark:text-yellow-300">Budget Alerts</h3>
             </div>
             <div className="space-y-2">
               {budgets.filter(b => b.status !== 'ok').map((budget) => (
                 <div key={budget.id} className="flex items-center justify-between text-sm">
-                  <span className="text-yellow-800">
+                  <span className="text-yellow-800 dark:text-yellow-300">
                     {budget.category?.icon} {budget.category?.name}: {budget.percentage.toFixed(0)}% used
                   </span>
-                  <span className={budget.status === 'exceeded' ? 'text-red-600 font-medium' : 'text-yellow-700'}>
+                  <span className={budget.status === 'exceeded' ? 'text-red-600 dark:text-red-400 font-medium' : 'text-yellow-700 dark:text-yellow-400'}>
                     {budget.status === 'exceeded' 
                       ? `${formatCurrency(Math.abs(budget.remaining))} over budget`
                       : `${formatCurrency(budget.remaining)} left`
@@ -311,15 +323,15 @@ const Dashboard = () => {
 
         {/* Upcoming Recurring Transactions */}
         {upcomingRecurring.length > 0 && (
-          <div className="mt-8 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-purple-600" />
-                <h2 className="text-lg font-semibold text-gray-900">Upcoming Recurring</h2>
+                <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Recurring</h2>
               </div>
               <button
                 onClick={() => navigate('/recurring')}
-                className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+                className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 text-sm font-medium"
               >
                 Manage
               </button>
@@ -328,17 +340,17 @@ const Dashboard = () => {
               {upcomingRecurring.map((item) => {
                 const daysUntil = Math.ceil((new Date(item.nextDate) - new Date()) / (1000 * 60 * 60 * 24));
                 return (
-                  <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{item.category?.icon}</span>
                       <div>
-                        <p className="font-medium text-gray-900 text-sm">
+                        <p className="font-medium text-gray-900 dark:text-white text-sm">
                           {item.description || item.category?.name}
                         </p>
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                           <Clock className="w-3 h-3" />
                           {daysUntil <= 0 ? (
-                            <span className="text-red-500 font-medium">Due!</span>
+                            <span className="text-red-500 dark:text-red-400 font-medium">Due!</span>
                           ) : daysUntil === 1 ? (
                             <span>Tomorrow</span>
                           ) : (
@@ -347,7 +359,7 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </div>
-                    <p className={`font-semibold text-sm ${item.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                    <p className={`font-semibold text-sm ${item.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                       {item.type === 'income' ? '+' : '-'}{formatCurrency(item.amount)}
                     </p>
                   </div>
@@ -358,12 +370,12 @@ const Dashboard = () => {
         )}
 
         {/* Recent Transactions */}
-        <div className="mt-8 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Transactions</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Transactions</h2>
             <button
               onClick={() => navigate('/transactions')}
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium"
             >
               View All
             </button>
@@ -374,25 +386,25 @@ const Dashboard = () => {
               {transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{transaction.category?.icon || '📦'}</span>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">
                         {transaction.description || transaction.category?.name}
                       </p>
-                      <p className="text-xs text-gray-500">{formatDate(transaction.date)}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(transaction.date)}</p>
                     </div>
                   </div>
-                  <p className={`font-semibold text-sm ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                  <p className={`font-semibold text-sm ${transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="h-[100px] flex items-center justify-center text-gray-500">
+            <div className="h-[100px] flex items-center justify-center text-gray-500 dark:text-gray-400">
               <p>No transactions yet.</p>
             </div>
           )}

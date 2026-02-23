@@ -15,6 +15,7 @@ import {
   X
 } from 'lucide-react';
 import { recurringAPI, categoriesAPI } from '../services/api';
+import ThemeToggle from '../components/ThemeToggle';
 
 const frequencyLabels = {
   daily: 'Daily',
@@ -184,27 +185,28 @@ export default function Recurring() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/dashboard" className="text-gray-500 hover:text-gray-700">
+            <Link to="/dashboard" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
               ← Dashboard
             </Link>
-            <h1 className="text-2xl font-bold text-gray-800">
-              <RefreshCw className="inline mr-2 text-purple-600" size={24} />
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+              <RefreshCw className="inline mr-2 text-purple-600 dark:text-purple-400" size={24} />
               Recurring Transactions
             </h1>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <ThemeToggle />
             <button
               onClick={handleProcess}
               disabled={processing}
@@ -226,74 +228,74 @@ export default function Recurring() {
 
       <main className="max-w-7xl mx-auto px-4 py-6">
         {error && (
-          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+          <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg">
             {error}
           </div>
         )}
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-xl shadow-sm">
-            <p className="text-sm text-gray-500">Total Active</p>
-            <p className="text-2xl font-bold text-purple-600">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Total Active</p>
+            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
               {recurring.filter(r => r.isActive).length}
             </p>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-sm">
-            <p className="text-sm text-gray-500">Monthly Income</p>
-            <p className="text-2xl font-bold text-green-600">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly Income</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400">
               ${recurring
                 .filter(r => r.isActive && r.type === 'income' && r.frequency === 'monthly')
                 .reduce((sum, r) => sum + r.amount, 0)
                 .toFixed(2)}
             </p>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-sm">
-            <p className="text-sm text-gray-500">Monthly Expenses</p>
-            <p className="text-2xl font-bold text-red-600">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Monthly Expenses</p>
+            <p className="text-2xl font-bold text-red-600 dark:text-red-400">
               ${recurring
                 .filter(r => r.isActive && r.type === 'expense' && r.frequency === 'monthly')
                 .reduce((sum, r) => sum + r.amount, 0)
                 .toFixed(2)}
             </p>
           </div>
-          <div className="bg-white p-4 rounded-xl shadow-sm">
-            <p className="text-sm text-gray-500">Next 7 Days</p>
-            <p className="text-2xl font-bold text-blue-600">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Next 7 Days</p>
+            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
               {recurring.filter(r => r.isActive && getDaysUntil(r.nextDate) <= 7 && getDaysUntil(r.nextDate) >= 0).length}
             </p>
           </div>
         </div>
 
         {/* Recurring Transactions List */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                   Description
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                   Amount
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                   Frequency
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                   Next Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {recurring.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan="6" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                     No recurring transactions configured
                   </td>
                 </tr>
@@ -301,15 +303,15 @@ export default function Recurring() {
                 recurring.map((item) => {
                   const daysUntil = getDaysUntil(item.nextDate);
                   return (
-                    <tr key={item.id} className={!item.isActive ? 'bg-gray-50 opacity-60' : ''}>
+                    <tr key={item.id} className={!item.isActive ? 'bg-gray-50 dark:bg-gray-800/50 opacity-60' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'}>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <span className="text-2xl">{item.category?.icon}</span>
                           <div>
-                            <p className="font-medium text-gray-800">
+                            <p className="font-medium text-gray-800 dark:text-white">
                               {item.description || item.category?.name}
                             </p>
-                            <p className="text-sm text-gray-500">{item.category?.name}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{item.category?.name}</p>
                           </div>
                         </div>
                       </td>
@@ -328,15 +330,15 @@ export default function Recurring() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+                        <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-full text-sm">
                           {frequencyLabels[item.frequency]}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <Calendar size={16} className="text-gray-400" />
+                          <Calendar size={16} className="text-gray-400 dark:text-gray-500" />
                           <div>
-                            <p className="text-gray-800">{formatDate(item.nextDate)}</p>
+                            <p className="text-gray-800 dark:text-gray-200">{formatDate(item.nextDate)}</p>
                             {item.isActive && (
                               <p className={`text-xs ${
                                 daysUntil <= 0 ? 'text-red-500 font-medium' :
@@ -352,12 +354,12 @@ export default function Recurring() {
                       </td>
                       <td className="px-6 py-4">
                         {item.isActive ? (
-                          <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-sm flex items-center gap-1 w-fit">
+                          <span className="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-sm flex items-center gap-1 w-fit">
                             <Clock size={14} />
                             Active
                           </span>
                         ) : (
-                          <span className="px-2 py-1 bg-gray-200 text-gray-600 rounded-full text-sm flex items-center gap-1 w-fit">
+                          <span className="px-2 py-1 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-full text-sm flex items-center gap-1 w-fit">
                             <PauseCircle size={14} />
                             Paused
                           </span>
@@ -367,7 +369,7 @@ export default function Recurring() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleSkip(item.id)}
-                            className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg"
+                            className="p-2 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded-lg"
                             title="Skip next"
                           >
                             <SkipForward size={18} />
@@ -376,8 +378,8 @@ export default function Recurring() {
                             onClick={() => handleToggleActive(item)}
                             className={`p-2 rounded-lg ${
                               item.isActive 
-                                ? 'text-yellow-600 hover:bg-yellow-50' 
-                                : 'text-green-600 hover:bg-green-50'
+                                ? 'text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/30' 
+                                : 'text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30'
                             }`}
                             title={item.isActive ? 'Pause' : 'Activate'}
                           >
@@ -385,14 +387,14 @@ export default function Recurring() {
                           </button>
                           <button
                             onClick={() => handleEdit(item)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg"
                             title="Edit"
                           >
                             <Edit2 size={18} />
                           </button>
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg"
                             title="Delete"
                           >
                             <Trash2 size={18} />
@@ -411,14 +413,14 @@ export default function Recurring() {
       {/* Modal for Create/Edit */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-800">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
                 {editingRecurring ? 'Edit Recurring' : 'New Recurring'}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               >
                 <X size={24} />
               </button>
@@ -432,8 +434,8 @@ export default function Recurring() {
                   onClick={() => setFormData({ ...formData, type: 'expense', categoryId: '' })}
                   className={`flex-1 py-2 rounded-lg font-medium transition ${
                     formData.type === 'expense'
-                      ? 'bg-red-100 text-red-700 border-2 border-red-500'
-                      : 'bg-gray-100 text-gray-600'
+                      ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-2 border-red-500'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                   }`}
                 >
                   Expense
@@ -443,8 +445,8 @@ export default function Recurring() {
                   onClick={() => setFormData({ ...formData, type: 'income', categoryId: '' })}
                   className={`flex-1 py-2 rounded-lg font-medium transition ${
                     formData.type === 'income'
-                      ? 'bg-green-100 text-green-700 border-2 border-green-500'
-                      : 'bg-gray-100 text-gray-600'
+                      ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border-2 border-green-500'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                   }`}
                 >
                   Income
@@ -453,7 +455,7 @@ export default function Recurring() {
 
               {/* Amount */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Amount
                 </label>
                 <input
@@ -462,35 +464,35 @@ export default function Recurring() {
                   required
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="0.00"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Description
                 </label>
                 <input
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   placeholder="Netflix, Salary, Rent..."
                 />
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Category
                 </label>
                 <select
                   required
                   value={formData.categoryId}
                   onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="">Select a category</option>
                   {filteredCategories.map((cat) => (
@@ -503,14 +505,14 @@ export default function Recurring() {
 
               {/* Frequency */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Frequency
                 </label>
                 <select
                   required
                   value={formData.frequency}
                   onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
@@ -522,7 +524,7 @@ export default function Recurring() {
 
               {/* Start Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Start Date
                 </label>
                 <input
@@ -530,20 +532,20 @@ export default function Recurring() {
                   required
                   value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
               {/* End Date (Optional) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   End Date (optional)
                 </label>
                 <input
                   type="date"
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 

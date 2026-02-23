@@ -12,7 +12,7 @@
 
 ## 🚧 v1.1.0 (Planned)
 - [x] Transaction search and filters
-- [ ] Dark mode
+- [x] Dark mode
 - [ ] Export to CSV/PDF
 - [ ] Multi-currency support
 - [ ] Email notifications for budget alerts
