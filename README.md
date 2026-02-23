@@ -17,11 +17,13 @@ A full-stack personal finance tracker built with the **PERN stack** (PostgreSQL,
 - **📅 Recurring Transactions** - Automate bills, subscriptions, salary tracking
 - **🎯 Budget Management** - Set spending limits with visual alerts
 - **🏷️ Smart Categories** - Pre-defined categories with icons and colors
+- **🌙 Dark Mode** - Toggle between light and dark themes, respects system preference
 - **📱 Responsive Design** - Works on desktop and mobile (TailwindCSS)
 
 ## 🎬 Demo
 
 ![Dashboard](images/dashboard.png)
+![Dashboard Dark](images/dashboard-dark.png)
 ![Transactions](images/transactions.png)
 
 ## 🛠️ Tech Stack
@@ -179,7 +181,8 @@ smartwallet/
 │
 ├── frontend/                # React SPA
 │   └── src/
-│       ├── context/         # Auth context
+│       ├── components/      # Reusable components (ThemeToggle)
+│       ├── context/         # Auth & Theme contexts
 │       ├── pages/           # Page components
 │       └── services/        # API client
 │
@@ -267,6 +270,26 @@ User ──┬── Transaction ──── Category
 - **Transaction**: Individual income/expense records
 - **Budget**: Spending limits per category
 - **RecurringTransaction**: Automated transaction templates
+
+## 🌙 Dark Mode
+
+SmartWallet includes a fully integrated dark mode:
+
+- **Toggle**: Click the sun/moon icon in the page header to switch themes
+- **System preference**: On first visit, the app respects your OS dark mode setting
+- **Persistence**: Your choice is saved in `localStorage` and applied instantly on reload
+- **No flash**: An inline script in `index.html` applies the theme before React renders
+
+### Technical Details
+
+| Aspect | Implementation |
+|--------|----------------|
+| Strategy | Tailwind CSS `darkMode: 'class'` |
+| State | `ThemeContext` (`context/ThemeContext.jsx`) |
+| Toggle | `ThemeToggle` component (`components/ThemeToggle.jsx`) |
+| Persistence | `localStorage('theme')` |
+| System detection | `prefers-color-scheme` media query |
+| Anti-FOUC | Inline `<script>` in `index.html` |
 
 ## 🧪 Development
 

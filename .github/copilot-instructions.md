@@ -69,8 +69,11 @@ smartwallet/
 │   └── src/
 │       ├── main.jsx                # App entry point
 │       ├── App.jsx                 # Router + auth wrapper
+│       ├── components/
+│       │   └── ThemeToggle.jsx      # Dark mode toggle button
 │       ├── context/
-│       │   └── AuthContext.jsx     # Auth state management
+│       │   ├── AuthContext.jsx     # Auth state management
+│       │   └── ThemeContext.jsx    # Dark mode state & persistence
 │       ├── services/
 │       │   └── api.js              # Axios client + interceptors
 │       └── pages/
@@ -180,6 +183,41 @@ const { page, total, totalPages } = response.data.pagination;
 />
 ```
 
+### Dark Mode Pattern
+
+```jsx
+// 1. Use dark: prefix for all TailwindCSS classes
+<div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+
+// 2. Access theme state in components (e.g., for Recharts)
+import { useTheme } from '../context/ThemeContext';
+const { isDark } = useTheme();
+
+// 3. Conditional styles for third-party components
+<Tooltip contentStyle={{
+  backgroundColor: isDark ? '#1f2937' : '#fff',
+  borderColor: isDark ? '#374151' : '#e5e7eb',
+  color: isDark ? '#f3f4f6' : '#111827',
+}} />
+
+// 4. Add ThemeToggle to every page header
+import ThemeToggle from '../components/ThemeToggle';
+<ThemeToggle />
+```
+
+### Dark Mode Color Palette
+
+| Element | Light | Dark |
+|---------|-------|------|
+| Page background | `bg-gray-50` | `dark:bg-gray-900` |
+| Cards/panels | `bg-white` | `dark:bg-gray-800` |
+| Borders | `border-gray-100/200` | `dark:border-gray-700` |
+| Primary text | `text-gray-900` | `dark:text-white` |
+| Secondary text | `text-gray-500/600` | `dark:text-gray-400` |
+| Form inputs | `bg-white border-gray-300` | `dark:bg-gray-700 dark:border-gray-600` |
+| Table header | `bg-gray-50` | `dark:bg-gray-700/50` |
+| Hover states | `hover:bg-gray-50` | `dark:hover:bg-gray-700/50` |
+
 ## API Endpoints
 
 ### Auth (public)
@@ -223,13 +261,14 @@ const { page, total, totalPages } = response.data.pagination;
 3. **JWT**: 7-day expiration, contains `userId` and `email`
 4. **API Responses**: Return JSON, errors use `{ error: "message" }`
 5. **Paginated Lists**: Return `{ data: [...], pagination: { page, limit, total, totalPages } }`
-6. **Styling**: TailwindCSS utilities only - no separate CSS files
+6. **Styling**: TailwindCSS utilities only - no separate CSS files. Use `dark:` prefix for dark mode variants
 7. **Icons**: Use lucide-react for UI, emoji for categories
-8. **Charts**: Recharts for data visualization
+8. **Charts**: Recharts for data visualization (use `isDark` from `useTheme()` for conditional styles)
 9. **Forms**: Controlled components with useState
 10. **Routing**: React Router v7 with protected routes
 11. **Search**: Server-side with Prisma `contains` + `mode: 'insensitive'`
 12. **Filtering**: Query params passed to Prisma `where` clauses
+13. **Dark Mode**: Class-based strategy (`darkMode: 'class'`), managed by `ThemeContext`, persisted in `localStorage`
 
 ## Budget System
 

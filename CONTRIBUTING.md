@@ -73,6 +73,8 @@ refactor: simplify auth middleware
 - Use TailwindCSS utilities
 - Avoid custom CSS unless necessary
 - Follow mobile-first approach
+- Always include `dark:` variants for new UI elements (see dark mode color palette in [copilot-instructions.md](.github/copilot-instructions.md))
+- Use `useTheme()` from `ThemeContext` when third-party components need conditional dark styles
 
 ## 🧪 Testing
 
@@ -82,6 +84,7 @@ Before submitting:
 2. Verify no console errors
 3. Check responsive design
 4. Test authentication flows
+5. Verify dark mode compatibility (toggle between light/dark and check your changes in both themes)
 
 ## 📝 Documentation
 
